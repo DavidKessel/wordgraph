@@ -1,6 +1,5 @@
 "Word, Deg. Centrality"
-great,2
-cool,2
-elephants,1
-Cats,3
-are,2
+cool,0.25
+cats,0.75
+are,0.50
+great,0.50

@@ -36,16 +36,13 @@ func main() {
 	data, err := os.Open(inPath)
 	checkError(err)
 	r := csv.NewReader(data)
-	if seperator != "," {
-		r.Comma = ';'
-	}
+	r.Comma = []rune(seperator)[0]
 
 	graph := graph.NewWordGraph() //declare a new wordgraph to store results
 
 	/*
 	 * Read each row and add all words as nodes
 	 */
-
 	for {
 		cell, err := r.Read()
 		if err != nil {
@@ -66,11 +63,23 @@ func main() {
 	checkError(err)
 	writer := csv.NewWriter(csvFile)
 
+	/*
+	 * looping over results and getting the degree centrality
+	 */
 	tmp := [][]string{{"Word, Deg. Centrality"}}
-	for word, centrality := range graph.GetDegCentrality() {
-		row := []string{word, fmt.Sprintf("%d", centrality)}
+	for key, result := range graph.GetResults() {
+		dg := fmt.Sprintf("%.2f", result.GetDegreeCentrality())
+		row := []string{key, dg}
 		tmp = append(tmp, row)
 	}
+
+	if verbose {
+		fmt.Println(tmp[0])
+		for word, result := range graph.GetResults() {
+			fmt.Printf("%s %v\n", word, result.GetDegreeCentrality())
+		}
+	}
+
 	writer.WriteAll(tmp)
 	writer.Flush()
 	csvFile.Close()
